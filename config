@@ -69,6 +69,7 @@ input "1:1:AT_Translated_Set_2_keyboard" xkb_options "caps:swapescape"
 #
     # Start a terminal
     bindsym $mod+Return exec $term tmux
+    bindsym $mod+Shift+f exec firefox
 
     # Kill focused window
     bindsym $mod+Shift+q kill
