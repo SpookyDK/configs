@@ -5,5 +5,6 @@ set -U fish_greeting ''
 alias sudo='sudo -E'
 alias v='nvim'
 alias sv='sudo -E nvim'
+alias s='sudo -E'
 
 
