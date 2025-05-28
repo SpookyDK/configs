@@ -26,7 +26,10 @@ set clipboard=unnamedplus
 
 call plug#begin()
     "Colorscheme
+    Plug 'williamboman/mason.nvim'
+    Plug 'williamboman/mason-lspconfig.nvim'
     Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+    Plug 'MeanderingProgrammer/render-markdown.nvim'
     "Autocomplete
     Plug 'neovim/nvim-lspconfig'
     Plug 'hrsh7th/cmp-nvim-lsp'
@@ -42,7 +45,10 @@ call plug#begin()
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.x' }
     Plug 'folke/which-key.nvim'
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'ahmedkhalf/project.nvim'
 call plug#end()
+let g:vsnip_snippet_dir = expand("~/.config/nvim/snippets/")
 colorscheme catppuccin " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
 autocmd BufRead,BufNewFile *.cl set filetype=opencl
 
@@ -76,6 +82,14 @@ lua <<EOF
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
       { name = 'vsnip' }, -- For vsnip users.
+        { name = 'path', option = {
+              get_cwd = function()
+                -- This gets the cwd as set by project.nvim
+                return vim.loop.cwd()
+              end,
+              label_trailing_slash = true,
+
+            }},
       -- { name = 'luasnip' }, -- For luasnip users.
       -- { name = 'ultisnips' }, -- For ultisnips users.
       -- { name = 'snippy' }, -- For snippy users.
@@ -88,20 +102,19 @@ require('nvim-treesitter.configs').setup {
   highlight = { enable = true, disable = {"vim"}},
   indent = { enable = true }, filetype = { opencl = "c",},
 }
- local capabilities = require('cmp_nvim_lsp').default_capabilities()
-  require'lspconfig'.gdscript.setup{}
-  require'lspconfig'.lua_ls.setup{}
-  require'lspconfig'.pylsp.setup{}
-  require'lspconfig'.opencl_ls.setup{}
 
+require("mason").setup()
+require("mason-lspconfig").setup()
+require('render-markdown').setup({
+    completions = { lsp = { enabled = true } },
+})
   require("telescope").setup()
-
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
 require("catppuccin").setup({
     integrations = {
         cmp = true,
@@ -121,3 +134,12 @@ wk.add({
 { "<leader>f", group = "file" }, 
 { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File", mode = "n"},
 })
+require('render-markdown').setup({
+  -- Optional config: highlight fenced code blocks
+  highlight_code_blocks = true
+})
+require("project_nvim").setup {
+  detection_methods = { "pattern" },
+  patterns = { "_config.yml", ".git" },
+  silent_chdir = true,
+}
