@@ -6,5 +6,6 @@ alias sudo='sudo -E'
 alias v='nvim'
 alias sv='sudo -E nvim'
 alias s='sudo -E'
+alias pacman='sudo pacman'
 
 
